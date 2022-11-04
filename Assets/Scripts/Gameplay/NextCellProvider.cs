@@ -1,4 +1,6 @@
-﻿namespace Gameplay
+﻿using UnityEngine;
+
+namespace Gameplay
 {
 public abstract class NextCellProvider
 {
@@ -9,6 +11,6 @@ public abstract class NextCellProvider
         _cells = cells;
     }
     
-    public abstract Cell GetNextCell(Cell initialCell);
+    public abstract Cell GetNextCell(Vector2Int index);
 }
 }

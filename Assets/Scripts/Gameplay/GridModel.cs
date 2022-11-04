@@ -8,11 +8,18 @@ public class GridModel
     private readonly Vector2Int _size;
     private readonly Cell[,] _cells;
     private readonly Dictionary<Direction, NextCellProvider> _nextCellProviders;
+    private readonly DistantIndexProvider xDistantIndexProvider;
+    private readonly DistantIndexProvider yDistantIndexProvider;
 
     public GridModel(Vector2Int size)
     {
         _size = size;
         _cells = new Cell[size.x, size.y];
+        
+        xDistantIndexProvider = new DistantIndexProvider(
+            0, size.x -1);
+        yDistantIndexProvider = new DistantIndexProvider(
+            0, size.y -1);
         
         _nextCellProviders = new Dictionary<Direction, NextCellProvider>
         {
@@ -30,14 +37,35 @@ public class GridModel
             _cells[x, y] = new Cell(new Vector2Int(x, y));
     }
     
-    public Cell GetCell(Vector2Int position) => _cells[position.x, position.y];
+    public Cell GetCell(Vector2Int index) => _cells[index.x, index.y];
 
-    public Cell GetNextCell(Vector2Int position)
+    public Cell GetNextCell(Vector2Int index)
     {
-        var cell = GetCell(position);
+        var cell = GetCell(index);
         var direction = cell.Direction;
         return direction == Direction.None ? cell :
-            _nextCellProviders[direction].GetNextCell(cell);
+            _nextCellProviders[direction].GetNextCell(index);
+    }
+    
+    public Cell GetRandomCell()
+    {
+        var x = RandomUtils.GetInt(0, _size.x - 1);
+        var y = RandomUtils.GetInt(0, _size.y - 1);
+        
+        return _cells[x, y];
+    }
+    
+    public Cell GetEquidistantCell(Vector2Int initialPosition, int distance)
+    {
+        var xDistance = RandomUtils.GetInt(0, distance);
+        var yDistance = distance - xDistance;
+        
+        var x = xDistantIndexProvider
+            .GetIndex(initialPosition.x, xDistance);
+        var y = yDistantIndexProvider
+            .GetIndex(initialPosition.y, yDistance);
+        
+        return _cells[x, y];
     }
 }
 }

@@ -4,12 +4,12 @@ namespace Gameplay
 { 
 public class Cell
 {
-    public Vector2Int Position { get; }
+    public Vector2Int Index { get; }
     public Direction Direction { get; set; }
     
-    public Cell(Vector2Int position)
+    public Cell(Vector2Int index)
     {
-        Position = position;
+        Index = index;
         Direction = Direction.None;
     }
 }

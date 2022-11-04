@@ -41,11 +41,10 @@ public class GridBehaviour : MonoBehaviour
             scale.y * start.y, 
             scale.z * (start.z + position.y * size.y));
         cell
-            .SetOnEnter(() => _onEnter?.Invoke(position))
             .SetDirectionSetter(dir => 
                 _setDirection?.Invoke(position, dir))
             .SetSize(size)
-            .SetPosition(cellPosition);
+            .Position = cellPosition;
             
         _cells[position.x, position.y] = cell;
     }

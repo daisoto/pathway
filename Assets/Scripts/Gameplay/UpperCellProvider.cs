@@ -1,14 +1,16 @@
-﻿namespace Gameplay
+﻿using UnityEngine;
+
+namespace Gameplay
 {
 public class UpperCellProvider: NextCellProvider
 {
     public UpperCellProvider(Cell[,] cells) : base(cells) { }
 
-    public override Cell GetNextCell(Cell initialCell)
+    public override Cell GetNextCell(Vector2Int index)
     {
-        var nextY = initialCell.Position.y - 1;
+        var nextY = index.y - 1;
         
-        return nextY > 0 ? _cells[initialCell.Position.x, nextY] : initialCell;
+        return nextY > 0 ? _cells[index.x, nextY] : _cells[index.x, index.y];
     }
 }
 }

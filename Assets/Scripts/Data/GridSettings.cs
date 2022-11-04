@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Gameplay;
 using UnityEngine;
 
@@ -13,24 +13,14 @@ public class GridSettings: ScriptableObject
     public Vector2Int Size => _size;
     
     [SerializeField]
-    private MoverData[] _moversData;
-    public IList<MoverData> MoversData => _moversData;
-    
-    [SerializeField]
     private Sprite _cellSprite;
     public Sprite CellSprite => _cellSprite;
     
     [SerializeField]
     private CellData[] _cellsData;
     
-    public Quaternion GetRotation(Direction dir)
-    {
-        foreach (var cd in _cellsData)
-            if (cd.Direction == dir)
-                return cd.Rotation;
-        
-        return default;
-    }
+    public CellData GetCellData(Direction dir) => 
+        _cellsData.FirstOrDefault(cd => cd.Direction == dir);
 }
     
 [Serializable]
@@ -43,12 +33,9 @@ public class CellData
     [SerializeField]
     private Quaternion _rotation;
     public Quaternion Rotation => _rotation;
-}
     
-[Serializable]
-public class MoverData
-{
     [SerializeField]
     private Color _color;
+    public Color Color => _color;
 }
 }

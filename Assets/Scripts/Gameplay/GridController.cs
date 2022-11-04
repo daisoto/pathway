@@ -38,12 +38,19 @@ public class GridController
     
     private void SetDirection(Vector2Int pos, Direction dir)
     {
+        var data = _settings.GetCellData(dir);
         _model.GetCell(pos).Direction = dir;
         var behaviour = _behaviour.GetCell(pos);
         
         behaviour
             .SetSprite(_settings.CellSprite)
-            .SetRotation(_settings.GetRotation(dir));
+            .SetRotation(data.Rotation)
+            .SetColor(data.Color);
     }
+    
+    public Cell GetRandomCell() => _model.GetRandomCell();
+    
+    public Cell GetEquidistantCell(Vector2Int initialPosition, int distance) => 
+        _model.GetEquidistantCell(initialPosition, distance);
 }
 }

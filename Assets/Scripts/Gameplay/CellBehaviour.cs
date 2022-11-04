@@ -8,14 +8,12 @@ public class CellBehaviour: MonoBehaviour
     [SerializeField]
     private SpriteRenderer _renderer;
     
-    private Action _onEnter;
     private Action<Direction> _setDirection;
     
-    public CellBehaviour SetOnEnter(Action onEnter)
+    public Vector3 Position
     {
-        _onEnter = onEnter;
-        
-        return this;
+        get => transform.position;
+        set => transform.position = value;
     }
     
     public CellBehaviour SetDirectionSetter(Action<Direction> setDirection)
@@ -32,16 +30,16 @@ public class CellBehaviour: MonoBehaviour
         return this;
     }
     
-    public CellBehaviour SetSize(Vector2 size)
+    public CellBehaviour SetColor(Color color)
     {
-        transform.localScale =size / _renderer.size;
-        
+        _renderer.color = color;
+            
         return this;
     }
     
-    public CellBehaviour SetPosition(Vector3 position)
+    public CellBehaviour SetSize(Vector2 size)
     {
-        transform.position = position;
+        transform.localScale =size / _renderer.size;
         
         return this;
     }
@@ -53,8 +51,7 @@ public class CellBehaviour: MonoBehaviour
         return this;
     }
     
+    // todo on player drop cell
     public void SetDirection(Direction dir) => _setDirection?.Invoke(dir);
-    
-    public void Enter() => _onEnter?.Invoke();
 }
 }
