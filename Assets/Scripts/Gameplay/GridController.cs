@@ -17,6 +17,8 @@ public class GridController
         _settings = settings;
         _behaviour = behaviour;
         _model = new GridModel(_size);
+        
+        CreateGrid();
     }
 
     public void CreateGrid()
@@ -41,7 +43,7 @@ public class GridController
         
         behaviour
             .SetSprite(_settings.CellSprite)
-            .Rotation = _settings.GetRotation(dir);
+            .SetRotation(_settings.GetRotation(dir));
     }
 }
 }

@@ -11,12 +11,6 @@ public class CellBehaviour: MonoBehaviour
     private Action _onEnter;
     private Action<Direction> _setDirection;
     
-    public Vector3 Position { set => transform.position = value; }
-    
-    public Quaternion Rotation { set => transform.rotation = value; }
-
-    public Vector3 Scale { set => transform.localScale = value; }
-    
     public CellBehaviour SetOnEnter(Action onEnter)
     {
         _onEnter = onEnter;
@@ -34,6 +28,27 @@ public class CellBehaviour: MonoBehaviour
     public CellBehaviour SetSprite(Sprite sprite)
     {
         _renderer.sprite = sprite;
+        
+        return this;
+    }
+    
+    public CellBehaviour SetSize(Vector2 size)
+    {
+        transform.localScale =size / _renderer.size;
+        
+        return this;
+    }
+    
+    public CellBehaviour SetPosition(Vector3 position)
+    {
+        transform.position = position;
+        
+        return this;
+    }
+    
+    public CellBehaviour SetRotation(Quaternion rotation)
+    {
+        transform.rotation = rotation;
         
         return this;
     }
