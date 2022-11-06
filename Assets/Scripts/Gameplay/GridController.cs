@@ -16,6 +16,7 @@ public class GridController
     {
         _settings = settings;
         _behaviour = behaviour;
+        
         _model = new GridModel(_size);
     }
 
@@ -39,6 +40,8 @@ public class GridController
     
     public void MarkDestination(Cell cell, Sprite sprite, Color color)
     {
+        cell.Direction = Direction.None;
+        
         _behaviour
             .GetCell(cell.Index)
             .SetSprite(sprite)
@@ -58,10 +61,8 @@ public class GridController
         _behaviour.GetCell(cell.Index).Position;
     
     public Cell GetNextCell(Cell cell) => _model.GetNextCell(cell.Index);
-    
-    public Cell GetRandomCell() => _model.GetRandomCell();
-    
-    public Cell GetEquidistantCell(Vector2Int initialPosition, int distance) => 
-        _model.GetEquidistantCell(initialPosition, distance);
+
+    public (Cell, Cell) GetFiniteCells(int distance) => 
+        _model.GetFiniteCells(distance);
 }
 }

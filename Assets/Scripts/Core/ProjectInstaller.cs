@@ -34,6 +34,10 @@ public class ProjectInstaller: MonoInstaller
         Container.BindInterfacesAndSelfTo<MoversManager>()
             .AsSingle()
             .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<LevelController>()
+            .AsSingle()
+            .NonLazy();
     }
     
     private void BindSignals()

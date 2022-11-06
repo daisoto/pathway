@@ -1,56 +1,60 @@
-﻿using System;
+﻿using UniRx;
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay
 {
-public class MoverController
+public class MoverController: IInitializable, IDisposable
 {
     private readonly MoverModel _model;
     private readonly MoverBehaviour _behaviour;
     
-    private readonly Func<Cell, Cell> _nextCellProvider;
     private readonly Func<Cell, Vector3> _cellPositionProvider;
+    
+    private readonly DisposablesContainer _disposablesContainer;
 
-    public MoverController(MoverModel model, MoverBehaviour behaviour, 
-        Func<Cell, Cell> nextCellProvider, 
+    public MoverController(MoverModel model, MoverBehaviour behaviour,
         Func<Cell, Vector3> cellPositionProvider)
     {
         _model = model;
         _behaviour = behaviour;
-        _nextCellProvider = nextCellProvider;
         _cellPositionProvider = cellPositionProvider;
-    }
-    
-    public void StartMoving() => Move().Forget();
-    
-    private async UniTask Move()
-    {
-        while (!_model.IsFinished)
-            await MoveInternal();
+        
+        _disposablesContainer = new DisposablesContainer();
     }
 
-    private async UniTask MoveInternal()
+    public void Initialize() => Bind();
+
+    public void Dispose() => _disposablesContainer.Dispose();
+    
+    private void Bind()
+    { 
+        _behaviour
+            .SetColor(_model.Color)
+            .SetTimeToMove(1 / _model.Speed)
+            .SetPosition(_cellPositionProvider.Invoke(_model.CurrentCell));
+        
+        _disposablesContainer.Add(_model.Move
+            .Subscribe(nextCell => Move(nextCell).Forget()));
+        
+        _disposablesContainer.Add(_model.ImmediateMove
+            .Subscribe(Reset));
+    }
+    
+    private async UniTask Move(Cell nextCell)
     {
-        var currentCell = _model.CurrentCell;
-        var nextCell = _nextCellProvider.Invoke(currentCell);
-        
-        if (currentCell == nextCell)
-            return;
-        
-        var position = _cellPositionProvider.Invoke(nextCell);
-        
-        await _behaviour.Move(position);
+        await _behaviour.Move(_cellPositionProvider.Invoke(nextCell));
         _model.CurrentCell = nextCell;
     }
     
-    public void Reset()
+    private void Reset(Cell initialCell)
     {
         _model.Reset();
         _behaviour
             .StopMoving()
-            .SetPosition(
-                _cellPositionProvider.Invoke(_model.CurrentCell));
+            .SetPosition(_cellPositionProvider.Invoke(initialCell));
     }
 }
 }
