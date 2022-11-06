@@ -15,7 +15,7 @@ public abstract class Pool<T>: IPool<T>
     public T Get()
     {
         return _stack.Count < 1 ? 
-            _factory.Get() : 
+            _factory.GetMoverBehaviour() : 
             _stack.Pop();
     }
 

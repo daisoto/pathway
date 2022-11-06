@@ -33,9 +33,5 @@ public class CellData
     [SerializeField]
     private Quaternion _rotation;
     public Quaternion Rotation => _rotation;
-    
-    [SerializeField]
-    private Color _color;
-    public Color Color => _color;
 }
 }

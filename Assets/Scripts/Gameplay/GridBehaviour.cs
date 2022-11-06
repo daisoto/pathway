@@ -11,7 +11,6 @@ public class GridBehaviour : MonoBehaviour
     [SerializeField]
     private float _upperIndent;
     
-    private Action<Vector2Int> _onEnter;
     private Action<Vector2Int, Direction> _setDirection;
 
     private CellBehaviour[,] _cells;
@@ -49,13 +48,6 @@ public class GridBehaviour : MonoBehaviour
         _cells[position.x, position.y] = cell;
     }
     
-    public GridBehaviour SetOnEnter(Action<Vector2Int> onEnter)
-    {
-        _onEnter = onEnter;
-        
-        return this;
-    }
-    
     public GridBehaviour SetDirectionSetter(
         Action<Vector2Int, Direction> setDirection)
     {
@@ -64,7 +56,7 @@ public class GridBehaviour : MonoBehaviour
         return this;
     }
         
-    public CellBehaviour GetCell(Vector2Int position) => 
-        _cells[position.x, position.y];
+    public CellBehaviour GetCell(Vector2Int index) => 
+        _cells[index.x, index.y];
 }
 }

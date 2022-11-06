@@ -9,6 +9,7 @@ public class CellBehaviour: MonoBehaviour
     private SpriteRenderer _renderer;
     
     private Action<Direction> _setDirection;
+    private bool _isChangeable = true;
     
     public Vector3 Position
     {
@@ -51,7 +52,17 @@ public class CellBehaviour: MonoBehaviour
         return this;
     }
     
-    // todo on player drop cell
-    public void SetDirection(Direction dir) => _setDirection?.Invoke(dir);
+    public CellBehaviour SetChangeable(bool isChangeable)
+    {
+        _isChangeable = isChangeable;
+        
+        return this;
+    }
+    
+    public void SetDirection(Direction dir)
+    {
+        if (_isChangeable)
+            _setDirection?.Invoke(dir);
+    }
 }
 }

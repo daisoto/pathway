@@ -13,15 +13,25 @@ public class ProjectInstaller: MonoInstaller
 {
     [SerializeField]
     private GridSettings _gridSettings;
-
+    
+    [SerializeField]
+    private MoversSettings _moversSettings;
+    
     public override void InstallBindings()
     {
         BindSignals();
         
         Container.BindInterfacesAndSelfTo<GridSettings>()
             .FromInstance(_gridSettings);
+        
+        Container.BindInterfacesAndSelfTo<MoversSettings>()
+            .FromInstance(_moversSettings);
 
         Container.BindInterfacesAndSelfTo<GridController>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<MoversManager>()
             .AsSingle()
             .NonLazy();
     }
