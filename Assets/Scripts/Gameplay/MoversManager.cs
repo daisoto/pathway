@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Data;
+using UnityEngine;
 
 namespace Gameplay
 {
@@ -13,6 +14,7 @@ public class MoversManager: IDisposable
     private readonly List<MoverModel> _models;
     
     private readonly DisposablesContainer _disposablesContainer;
+    
 
     public MoversManager(MoversSettings settings, 
         GridController gridController)
@@ -34,8 +36,7 @@ public class MoversManager: IDisposable
             var (initialCell, finalCell) = _gridController
                 .GetFiniteCells(distance);
             
-            _gridController.MarkDestination(finalCell, 
-                data.DestinationSprite, data.Color);
+            _gridController.MarkDestination(finalCell, data.Color);
             
             var model = new MoverModel(initialCell, finalCell, 
                 data.Color, data.Speed);

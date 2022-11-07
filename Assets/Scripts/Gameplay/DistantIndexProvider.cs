@@ -4,13 +4,13 @@ namespace Gameplay
 {
 public class DistantIndexProvider
 {
-    private readonly int _maxValue;
     private readonly int _minValue;
+    private readonly int _maxValue;
 
-    public DistantIndexProvider(int maxValue, int minValue)
+    public DistantIndexProvider(int minValue, int maxValue)
     {
-        _maxValue = maxValue;
         _minValue = minValue;
+        _maxValue = maxValue;
     }
     
     public int GetIndex(int initial, int distance)

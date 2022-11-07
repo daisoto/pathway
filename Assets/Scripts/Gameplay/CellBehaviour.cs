@@ -10,12 +10,15 @@ public class CellBehaviour: MonoBehaviour
     
     private Action<Direction> _setDirection;
     private bool _isChangeable = true;
+    private Quaternion _initialRotation;
     
     public Vector3 Position
     {
         get => transform.position;
         set => transform.position = value;
     }
+    
+    private void Awake() => _initialRotation = transform.rotation;
     
     public CellBehaviour SetDirectionSetter(Action<Direction> setDirection)
     {
@@ -47,7 +50,7 @@ public class CellBehaviour: MonoBehaviour
     
     public CellBehaviour SetRotation(Quaternion rotation)
     {
-        transform.rotation = rotation;
+        transform.rotation = _initialRotation * rotation;
         
         return this;
     }

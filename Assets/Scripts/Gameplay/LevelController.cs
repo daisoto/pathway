@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Zenject;
 
 namespace Gameplay
 {
@@ -9,18 +10,22 @@ public class LevelController: IDisposable
 {
     private readonly GridController _gridController;
     private readonly MoversManager _moversManager;
+    private readonly SignalBus _signalBus; 
     
     private readonly DisposablesContainer _disposablesContainer;
     
     private List<MoverModel> _activeMovers;
 
     public LevelController(GridController gridController, 
-        MoversManager moversManager)
+        MoversManager moversManager, SignalBus signalBus)
     {
         _gridController = gridController;
         _moversManager = moversManager;
-         
+        _signalBus = signalBus;
+
         _disposablesContainer = new DisposablesContainer();
+        
+        StartLevel();
     }
 
     public void Dispose() => _disposablesContainer.Dispose();
@@ -31,6 +36,8 @@ public class LevelController: IDisposable
         _moversManager.CreateMovers();
         
         _activeMovers = new List<MoverModel>(_moversManager.Models);
+        
+        Move();
         
         SubscribeVictory();
     }
@@ -52,8 +59,7 @@ public class LevelController: IDisposable
         while (!model.IsFinished.Value)
         {
             var nextCell = _gridController.GetNextCell(model.CurrentCell);
-            model.Move.Execute(nextCell);
-            await UniTask.WaitUntil(() => model.CurrentCell == nextCell);
+            await model.Move(nextCell);
         }
     }
     
@@ -65,8 +71,10 @@ public class LevelController: IDisposable
                 .Subscribe(isFinished =>
                 {
                     if (isFinished)
+                    {
                         _activeMovers.Remove(mover);
-                    CheckVictory();
+                        CheckVictory();
+                    } 
                 }));
         }
     }
@@ -74,9 +82,7 @@ public class LevelController: IDisposable
     private void CheckVictory()
     {
         if (_activeMovers.Count == 0)
-        {
-            // todo victory
-        }
+            _signalBus.Fire(new VictorySignal());
     }
 }
 }

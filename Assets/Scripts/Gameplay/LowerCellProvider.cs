@@ -8,10 +8,9 @@ public class LowerCellProvider: NextCellProvider
 
     public override Cell GetNextCell(Vector2Int index)
     {
-        var nextY = index.y + 1;
+        var nextY = index.y - 1;
         
-        return nextY < _cells.GetLength(1) ? 
-            _cells[index.x, nextY] : _cells[index.x, index.y];
+        return nextY >= 0 ? _cells[index.x, nextY] : _cells[index.x, index.y];
     }
 }
 }

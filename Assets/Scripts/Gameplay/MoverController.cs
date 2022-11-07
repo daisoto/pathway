@@ -36,15 +36,18 @@ public class MoverController: IInitializable, IDisposable
             .SetTimeToMove(1 / _model.Speed)
             .SetPosition(_cellPositionProvider.Invoke(_model.CurrentCell));
         
-        _disposablesContainer.Add(_model.Move
+        _disposablesContainer.Add(_model.OnMove
             .Subscribe(nextCell => Move(nextCell).Forget()));
         
-        _disposablesContainer.Add(_model.ImmediateMove
+        _disposablesContainer.Add(_model.OnImmediateMove
             .Subscribe(Reset));
     }
     
     private async UniTask Move(Cell nextCell)
     {
+        if (nextCell == _model.CurrentCell)
+            return;
+        
         await _behaviour.Move(_cellPositionProvider.Invoke(nextCell));
         _model.CurrentCell = nextCell;
     }

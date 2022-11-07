@@ -30,10 +30,6 @@ public class MoverData
     public float Speed => _speed; 
     
     [SerializeField]
-    private Sprite _destinationSprite;
-    public Sprite DestinationSprite => _destinationSprite;
-    
-    [SerializeField]
     private int _minDistance;
     
     [SerializeField]

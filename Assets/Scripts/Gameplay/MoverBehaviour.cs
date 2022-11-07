@@ -13,6 +13,20 @@ public class MoverBehaviour: MonoBehaviour
     private float _timeToMove;
     private CancellationTokenSource _cts;
     
+    private Vector3 _verticalOffset
+    {
+        get
+        {
+            if (_verticalOffsetInternal == default)
+                _verticalOffsetInternal = 
+                    new Vector3(0, transform.localScale.y / 2, 0);
+            
+            return  _verticalOffsetInternal;
+        }
+    }
+    
+    private Vector3 _verticalOffsetInternal;
+    
     public MoverBehaviour SetColor(Color color)
     {
         _renderer.material.color = color;
@@ -29,7 +43,7 @@ public class MoverBehaviour: MonoBehaviour
     
     public MoverBehaviour SetPosition(Vector3 position)
     {
-        transform.position = position;
+        transform.position = GetFixedPosition(position);
         
         return this;
     }
@@ -46,11 +60,15 @@ public class MoverBehaviour: MonoBehaviour
         _cts = new CancellationTokenSource();
         var hasFinished = false;
         transform
-            .DOMove(position, _timeToMove)
+            .DOMove(GetFixedPosition(position), _timeToMove)
+            .SetEase(Ease.Linear)
             .OnComplete(() => hasFinished = true);
         
         await UniTask.WaitUntil(() => hasFinished, 
             PlayerLoopTiming.LastUpdate, _cts.Token);
     }
+    
+    private Vector3 GetFixedPosition(Vector3 position) => 
+        position + _verticalOffset;
 }
 }

@@ -5,18 +5,20 @@ namespace Gameplay
 {
 public class GridController
 {
-    private readonly GridSettings _settings;
+    private readonly GridSettings _gridSettings;
+    private readonly CellsSettings _cellsSettings;
     private readonly GridBehaviour _behaviour;
     private readonly GridModel _model;
         
-    private Vector2Int _size => _settings.Size;
+    private Vector2Int _size => _gridSettings.Size;
 
-    public GridController(GridSettings settings,
-        GridBehaviour behaviour)
+    public GridController(GridSettings gridSettings,
+        GridBehaviour behaviour, CellsSettings cellsSettings)
     {
-        _settings = settings;
+        _gridSettings = gridSettings;
         _behaviour = behaviour;
-        
+        _cellsSettings = cellsSettings;
+
         _model = new GridModel(_size);
     }
 
@@ -30,21 +32,20 @@ public class GridController
     
     private void SetDirection(Vector2Int pos, Direction dir)
     {
-        var data = _settings.GetCellData(dir);
         _model.GetCell(pos).Direction = dir;
         _behaviour
             .GetCell(pos)
-            .SetSprite(_settings.CellSprite)
-            .SetRotation(data.Rotation);
+            .SetSprite(_cellsSettings.GetSprite(dir))
+            .SetRotation(_cellsSettings.GetRotation(dir));
     }
     
-    public void MarkDestination(Cell cell, Sprite sprite, Color color)
+    public void MarkDestination(Cell cell, Color color)
     {
         cell.Direction = Direction.None;
         
         _behaviour
             .GetCell(cell.Index)
-            .SetSprite(sprite)
+            .SetSprite(_cellsSettings.DestinationSprite)
             .SetColor(color)
             .SetChangeable(false);
     }
@@ -53,7 +54,8 @@ public class GridController
     {
         _behaviour
             .GetCell(cell.Index)
-            .SetSprite(_settings.CellSprite)
+            .SetColor(_cellsSettings.DefaultColor)
+            .SetSprite(_cellsSettings.GetSprite(Direction.None))
             .SetChangeable(true);
     }
     

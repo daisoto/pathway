@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 
@@ -22,10 +23,11 @@ public class MoverModel
     }
     private Cell _currentCell;
     
-    public IObservable<Cell> ImmediateMove => _immediateMove; 
-    private readonly ReactiveCommand<Cell> _immediateMove;
+    public IObservable<Cell> OnImmediateMove => _onImmediateMove; 
+    private readonly ReactiveCommand<Cell> _onImmediateMove;
     
-    public readonly ReactiveCommand<Cell> Move;
+    public IObservable<Cell> OnMove => _onMove;
+    private readonly ReactiveCommand<Cell> _onMove;
 
     public IReadOnlyReactiveProperty<bool> IsFinished => _isFinished;
     private readonly ReactiveProperty<bool> _isFinished; 
@@ -43,15 +45,21 @@ public class MoverModel
 
         _currentCell = initialCell;
         _isFinished = new ReactiveProperty<bool>(false);
-        Move = new ReactiveCommand<Cell>();
-        _immediateMove = new ReactiveCommand<Cell>();
+        _onMove = new ReactiveCommand<Cell>();
+        _onImmediateMove = new ReactiveCommand<Cell>();
+    }
+    
+    public async UniTask Move(Cell nextCell)
+    {
+        _onMove.Execute(nextCell);
+        await UniTask.WaitUntil(() => CurrentCell == nextCell);
     }
     
     public void Reset()
     {
         _isFinished.Value = false;
         _currentCell = _initialCell;
-        _immediateMove.Execute(_initialCell);
+        _onImmediateMove.Execute(_initialCell);
     }
 }
 }

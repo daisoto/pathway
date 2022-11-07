@@ -5,6 +5,9 @@ namespace Gameplay
 {
 public class GridBehaviour : MonoBehaviour
 {
+    public Vector3 Position => transform.position;
+    public Vector3 Scale => transform.localScale;
+    
     [SerializeField] 
     private CellBehaviour _cellPrefab;
     

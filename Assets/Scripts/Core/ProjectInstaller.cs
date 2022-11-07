@@ -2,6 +2,7 @@
 using System.Linq;
 using Data;
 using Gameplay;
+using UI;
 using UnityEngine;
 using Zenject;
 
@@ -15,6 +16,9 @@ public class ProjectInstaller: MonoInstaller
     private GridSettings _gridSettings;
     
     [SerializeField]
+    private CellsSettings _cellsSettings;
+    
+    [SerializeField]
     private MoversSettings _moversSettings;
     
     public override void InstallBindings()
@@ -23,6 +27,9 @@ public class ProjectInstaller: MonoInstaller
         
         Container.BindInterfacesAndSelfTo<GridSettings>()
             .FromInstance(_gridSettings);
+        
+        Container.BindInterfacesAndSelfTo<CellsSettings>()
+            .FromInstance(_cellsSettings);
         
         Container.BindInterfacesAndSelfTo<MoversSettings>()
             .FromInstance(_moversSettings);
@@ -36,6 +43,10 @@ public class ProjectInstaller: MonoInstaller
             .NonLazy();
 
         Container.BindInterfacesAndSelfTo<LevelController>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<CellSettingPresenter>()
             .AsSingle()
             .NonLazy();
     }
