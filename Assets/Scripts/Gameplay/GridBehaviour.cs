@@ -6,7 +6,6 @@ namespace Gameplay
 public class GridBehaviour : MonoBehaviour
 {
     public Vector3 Position => transform.position;
-    public Vector3 Scale => transform.localScale;
     
     [SerializeField] 
     private CellBehaviour _cellPrefab;
@@ -37,6 +36,15 @@ public class GridBehaviour : MonoBehaviour
         }
         
         return this;
+    }
+    
+    public void IterateCells(Action<CellBehaviour> onIterate)
+    {
+        for (int x = 0; x < _cells.GetLength(0); x++)
+        for (int y = 0; y < _cells.GetLength(1); y++)
+        {
+            onIterate.Invoke(_cells[x, y]);
+        }
     }
     
     private CellBehaviour CreateCell(Vector2Int position, Vector2 size, Vector3 start)

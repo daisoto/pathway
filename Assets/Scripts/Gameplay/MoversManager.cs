@@ -50,7 +50,6 @@ public class MoversManager: IInitializable, IDisposable
     
     public void ResetMovers()
     {
-        _gridController.ClearOccupiedCells();
         foreach (var model in _models)
         {
             var (initialCell, finalCell) = _gridController

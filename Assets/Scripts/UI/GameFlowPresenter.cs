@@ -45,7 +45,15 @@ public class GameFlowPresenter: Presenter<GameFlowView>, IInitializable
             .SetPause(false);
     }
     
-    private void Reset() => _signalBus.Fire(new ResetGameSignal());
+    private void Reset()
+    {
+        _signalBus.Fire(new ResetGameSignal());
+        _view
+            .SetReset(false)
+            .SetResume(false)
+            .SetPause(false)
+            .SetStart(true);
+    }
     private void Exit() => _signalBus.Fire(new QuitGameSignal());
 }
 }

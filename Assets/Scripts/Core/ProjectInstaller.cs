@@ -21,42 +21,15 @@ public class ProjectInstaller: MonoInstaller
     [SerializeField]
     private MoversSettings _moversSettings;
     
+    [SerializeField]
+    private ScoresSettings _scoresSettings;
+    
     public override void InstallBindings()
     {
         BindSignals();
-        
-        Container.BindInterfacesAndSelfTo<GridSettings>()
-            .FromInstance(_gridSettings);
-        
-        Container.BindInterfacesAndSelfTo<CellsSettings>()
-            .FromInstance(_cellsSettings);
-        
-        Container.BindInterfacesAndSelfTo<MoversSettings>()
-            .FromInstance(_moversSettings);
-
-        Container.BindInterfacesAndSelfTo<GridController>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<MoversManager>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<LevelController>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<CellSettingPresenter>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<GameplayController>()
-            .AsSingle()
-            .NonLazy();
-
-        Container.BindInterfacesAndSelfTo<GameFlowPresenter>()
-            .AsSingle()
-            .NonLazy();
+        BindSettings();
+        BindGameplay();
+        BindUI();
     }
     
     private void BindSignals()
@@ -71,6 +44,59 @@ public class ProjectInstaller: MonoInstaller
             Container.DeclareSignal(type);
 
         SignalBusInstaller.Install(Container);
+    }
+    
+    private void BindSettings()
+    {
+        Container.BindInterfacesAndSelfTo<GridSettings>()
+            .FromInstance(_gridSettings);
+        
+        Container.BindInterfacesAndSelfTo<CellsSettings>()
+            .FromInstance(_cellsSettings);
+        
+        Container.BindInterfacesAndSelfTo<MoversSettings>()
+            .FromInstance(_moversSettings);
+        
+        Container.BindInterfacesAndSelfTo<ScoresSettings>()
+            .FromInstance(_scoresSettings);
+    }
+    
+    private void BindGameplay()
+    {
+        Container.BindInterfacesAndSelfTo<GridController>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<MoversManager>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<LevelController>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<ScoreManager>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<GameplayController>()
+            .AsSingle()
+            .NonLazy();
+    }
+    
+    private void BindUI()
+    {
+        Container.BindInterfacesAndSelfTo<GameFlowPresenter>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<CellSettingPresenter>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<ScorePresenter>()
+            .AsSingle()
+            .NonLazy();
     }
 }
 }

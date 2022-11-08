@@ -40,7 +40,7 @@ public class LevelController: IInitializable, IDisposable
         Dispose();
         _activeMovers = new List<MoverModel>(_moversManager.Models);
         SubscribeVictory();
-        
+
         _isPlaying = true;
         Move();
     }
@@ -48,6 +48,7 @@ public class LevelController: IInitializable, IDisposable
     public void Reset()
     {
         _isPlaying = false;
+        _gridController.ClearCells();
         _moversManager.ResetMovers();
     }
     

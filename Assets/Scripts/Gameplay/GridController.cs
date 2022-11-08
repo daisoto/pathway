@@ -51,11 +51,7 @@ public class GridController
             .SetChangeable(false);
     }
     
-    public void ClearOccupiedCells()
-    {
-        foreach (var cell in _model.OccupiedCells)
-            ClearCell(_behaviour.GetCell(cell.Index));
-    }
+    public void ClearCells() => _behaviour.IterateCells(ClearCell);
     
     private void ClearCell(CellBehaviour cell)
     {
