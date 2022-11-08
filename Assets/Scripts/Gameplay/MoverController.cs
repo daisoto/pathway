@@ -33,8 +33,7 @@ public class MoverController: IInitializable, IDisposable
     { 
         _behaviour
             .SetColor(_model.Color)
-            .SetTimeToMove(1 / _model.Speed)
-            .SetPosition(_cellPositionProvider.Invoke(_model.CurrentCell));
+            .SetTimeToMove(1 / _model.Speed);
         
         _disposablesContainer.Add(_model.OnMove
             .Subscribe(nextCell => Move(nextCell).Forget()));
@@ -54,7 +53,6 @@ public class MoverController: IInitializable, IDisposable
     
     private void Reset(Cell initialCell)
     {
-        _model.Reset();
         _behaviour
             .StopMoving()
             .SetPosition(_cellPositionProvider.Invoke(initialCell));

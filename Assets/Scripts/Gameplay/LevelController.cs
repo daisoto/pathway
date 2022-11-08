@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Gameplay
 {
-public class LevelController: IDisposable
+public class LevelController: IInitializable, IDisposable
 {
     private readonly GridController _gridController;
     private readonly MoversManager _moversManager;
@@ -15,6 +15,7 @@ public class LevelController: IDisposable
     private readonly DisposablesContainer _disposablesContainer;
     
     private List<MoverModel> _activeMovers;
+    private bool _isPlaying;
 
     public LevelController(GridController gridController, 
         MoversManager moversManager, SignalBus signalBus)
@@ -24,31 +25,33 @@ public class LevelController: IDisposable
         _signalBus = signalBus;
 
         _disposablesContainer = new DisposablesContainer();
-        
-        StartLevel();
+    }
+    
+    public void Initialize()
+    {
+        _gridController.CreateGrid();
+        _moversManager.ResetMovers();
     }
 
     public void Dispose() => _disposablesContainer.Dispose();
     
     public void StartLevel()
     {
-        _gridController.CreateGrid();
-        _moversManager.CreateMovers();
-        
+        Dispose();
         _activeMovers = new List<MoverModel>(_moversManager.Models);
-        
-        Move();
-        
         SubscribeVictory();
+        
+        _isPlaying = true;
+        Move();
     }
     
     public void Reset()
     {
-        foreach (var mover in _moversManager.Models)
-            mover.Reset();
+        _isPlaying = false;
+        _moversManager.ResetMovers();
     }
     
-    public void Move()
+    private void Move()
     {
         foreach (var mover in _activeMovers)
             MoveInternal(mover).Forget();
@@ -56,7 +59,7 @@ public class LevelController: IDisposable
 
     private async UniTask MoveInternal(MoverModel model)
     {
-        while (!model.IsFinished.Value)
+        while (!model.IsFinished.Value && _isPlaying)
         {
             var nextCell = _gridController.GetNextCell(model.CurrentCell);
             await model.Move(nextCell);

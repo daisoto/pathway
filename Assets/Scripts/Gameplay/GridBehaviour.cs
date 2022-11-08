@@ -18,7 +18,8 @@ public class GridBehaviour : MonoBehaviour
 
     private CellBehaviour[,] _cells;
 
-    public GridBehaviour CreateGrid(Vector2Int size)
+    public GridBehaviour CreateGrid(Vector2Int size, 
+        Action<CellBehaviour> onCreate)
     {
         _cells = new CellBehaviour[size.x, size.y];
         var cellSize = new Vector2(1f / size.x, 1f / size.y);
@@ -29,12 +30,16 @@ public class GridBehaviour : MonoBehaviour
             
         for (int x = 0; x < size.x; x++)
         for (int y = 0; y < size.y; y++)
-            CreateCell(new Vector2Int(x, y), cellSize, start);
+        {
+            var cell = CreateCell(
+                new Vector2Int(x, y), cellSize, start);
+            onCreate.Invoke(cell);
+        }
         
         return this;
     }
     
-    private void CreateCell(Vector2Int position, Vector2 size, Vector3 start)
+    private CellBehaviour CreateCell(Vector2Int position, Vector2 size, Vector3 start)
     {
         var cell = Instantiate(_cellPrefab, transform);
         var scale = transform.localScale;
@@ -49,6 +54,8 @@ public class GridBehaviour : MonoBehaviour
             .Position = cellPosition;
             
         _cells[position.x, position.y] = cell;
+        
+        return cell;
     }
     
     public GridBehaviour SetDirectionSetter(

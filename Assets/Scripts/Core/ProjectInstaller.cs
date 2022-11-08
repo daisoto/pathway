@@ -49,6 +49,14 @@ public class ProjectInstaller: MonoInstaller
         Container.BindInterfacesAndSelfTo<CellSettingPresenter>()
             .AsSingle()
             .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<GameplayController>()
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInterfacesAndSelfTo<GameFlowPresenter>()
+            .AsSingle()
+            .NonLazy();
     }
     
     private void BindSignals()

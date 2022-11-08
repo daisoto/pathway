@@ -50,7 +50,7 @@ public class MoverBehaviour: MonoBehaviour
     
     public MoverBehaviour StopMoving()
     {
-        _cts.Cancel();
+        _cts?.Cancel();
         
         return this;
     }

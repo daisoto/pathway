@@ -1,4 +1,4 @@
 ﻿namespace Gameplay
 {
-    public struct ResumeGameSignal: ISignal { }
+public struct ResumeGameSignal: ISignal { }
 }

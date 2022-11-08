@@ -8,7 +8,6 @@ public class CellsSettings: ScriptableObject
 {
     [SerializeField]
     private Sprite _directionSprite;
-    
     [SerializeField]
     private Sprite _noDirectionSprite;
     

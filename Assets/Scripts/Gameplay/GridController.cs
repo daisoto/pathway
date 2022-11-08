@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using System;
+using Data;
 using UnityEngine;
 
 namespace Gameplay
@@ -26,7 +27,7 @@ public class GridController
     {
         _model.CreateGrid();
         _behaviour
-            .CreateGrid(_size)
+            .CreateGrid(_size, ClearCell)
             .SetDirectionSetter(SetDirection);
     }
     
@@ -50,21 +51,27 @@ public class GridController
             .SetChangeable(false);
     }
     
-    public void ClearCell(Cell cell)
+    public void ClearOccupiedCells()
     {
-        _behaviour
-            .GetCell(cell.Index)
+        foreach (var cell in _model.OccupiedCells)
+            ClearCell(_behaviour.GetCell(cell.Index));
+    }
+    
+    private void ClearCell(CellBehaviour cell)
+    {
+        cell
             .SetColor(_cellsSettings.DefaultColor)
             .SetSprite(_cellsSettings.GetSprite(Direction.None))
             .SetChangeable(true);
     }
+    
     
     public Vector3 GetCellPosition(Cell cell) => 
         _behaviour.GetCell(cell.Index).Position;
     
     public Cell GetNextCell(Cell cell) => _model.GetNextCell(cell.Index);
 
-    public (Cell, Cell) GetFiniteCells(int distance) => 
-        _model.GetFiniteCells(distance);
+    public (Cell, Cell) GetFiniteCells(Func<int> distanceProvider) => 
+        _model.GetFiniteCells(distanceProvider);
 }
 }

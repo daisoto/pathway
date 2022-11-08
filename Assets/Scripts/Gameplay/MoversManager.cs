@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Data;
-using UnityEngine;
+using Zenject;
 
 namespace Gameplay
 {
-public class MoversManager: IDisposable
+public class MoversManager: IInitializable, IDisposable
 {
     private readonly GridController _gridController;
     private readonly MoversSettings _settings;
@@ -25,29 +25,43 @@ public class MoversManager: IDisposable
         _models = new List<MoverModel>();
         _disposablesContainer = new DisposablesContainer();
     }
+
+    public void Initialize() => CreateMovers();
     
     public void Dispose() => _disposablesContainer.Dispose();
     
-    public void CreateMovers()
+    private void CreateMovers()
     {
         foreach (var data in _settings.MoversData)
         {
-            var distance = data.GetDistance();
-            var (initialCell, finalCell) = _gridController
-                .GetFiniteCells(distance);
+            var model = new MoverModel(data.GetDistance, 
+                    data.Color, data.Speed);
             
-            _gridController.MarkDestination(finalCell, data.Color);
-            
-            var model = new MoverModel(initialCell, finalCell, 
-                data.Color, data.Speed);
             _models.Add(model);
             
             var behaviour = _settings.GetMoverBehaviour();
-            var mover = new MoverController(
+            var controller = new MoverController(
                 model, behaviour, _gridController.GetCellPosition);
-            mover.Initialize();
+            controller.Initialize();
             
-            _disposablesContainer.Add(mover);
+            _disposablesContainer.Add(controller);
+        }
+    }
+    
+    public void ResetMovers()
+    {
+        _gridController.ClearOccupiedCells();
+        foreach (var model in _models)
+        {
+            var (initialCell, finalCell) = _gridController
+                .GetFiniteCells(model.DistanceProvider.Invoke);
+            
+            _gridController.MarkDestination(finalCell, model.Color);
+                
+            model
+                .SetInitialCell(initialCell)
+                .SetFinalCell(finalCell)
+                .Reset();
         }
     }
 }

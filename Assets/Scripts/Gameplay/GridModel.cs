@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class GridModel
     private readonly DistantIndexProvider xDistantIndexProvider;
     private readonly DistantIndexProvider yDistantIndexProvider;
     
+    public IList<Cell> OccupiedCells => _occupiedCells;
     private readonly List<Cell> _occupiedCells;
 
     public GridModel(Vector2Int size)
@@ -51,13 +53,13 @@ public class GridModel
             _nextCellProviders[direction].GetNextCell(index);
     }
     
-    public (Cell, Cell) GetFiniteCells(int distance)
+    public (Cell, Cell) GetFiniteCells(Func<int> distanceProvider)
     {
-        var (initialCell, finalCell) = GetFiniteCellsInternal(distance);
+        var (initialCell, finalCell) = GetFiniteCellsInternal(distanceProvider);
             
         while (_occupiedCells.Contains(initialCell) ||
                _occupiedCells.Contains(finalCell))
-            (initialCell, finalCell) = GetFiniteCellsInternal(distance);
+            (initialCell, finalCell) = GetFiniteCellsInternal(distanceProvider);
             
         _occupiedCells.Add(initialCell);
         _occupiedCells.Add(finalCell);
@@ -65,8 +67,9 @@ public class GridModel
         return (initialCell, finalCell);
     }
     
-    private (Cell, Cell) GetFiniteCellsInternal(int distance)
+    private (Cell, Cell) GetFiniteCellsInternal(Func<int> distanceProvider)
     {
+        var distance = distanceProvider.Invoke();
         var startingCell = GetRandomCell();
         var finalCell = GetEquidistantCell(startingCell.Index, distance);
         
