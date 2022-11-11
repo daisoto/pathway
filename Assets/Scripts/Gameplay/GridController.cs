@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Data;
 using UnityEngine;
 
@@ -33,7 +34,7 @@ public class GridController
     
     private void SetDirection(Vector2Int pos, Direction dir)
     {
-        _model.GetCell(pos).Direction = dir;
+        _model.SetCellDirection(pos, dir);
         _behaviour
             .GetCell(pos)
             .SetSprite(_cellsSettings.GetSprite(dir))
@@ -51,14 +52,24 @@ public class GridController
             .SetChangeable(false);
     }
     
-    public void ClearCells() => _behaviour.IterateCells(ClearCell);
+    public void ClearCells()
+    {
+        var indexesToClear = new List<Vector2Int>(_model.SetCellsIndexes);
+        indexesToClear.AddRange(_model.FiniteCellsIndexes);
+        
+        _behaviour.IterateCells(indexesToClear, ClearCell);
+        _model.ClearSetCells();
+        _model.ClearFiniteCells();
+    } 
     
     private void ClearCell(CellBehaviour cell)
     {
+        var dir = Direction.None;
         cell
             .SetColor(_cellsSettings.DefaultColor)
-            .SetSprite(_cellsSettings.GetSprite(Direction.None))
-            .SetChangeable(true);
+            .SetSprite(_cellsSettings.GetSprite(dir))
+            .SetChangeable(true)
+            .SetRotation(_cellsSettings.GetRotation(dir));
     }
     
     

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay
@@ -38,13 +39,11 @@ public class GridBehaviour : MonoBehaviour
         return this;
     }
     
-    public void IterateCells(Action<CellBehaviour> onIterate)
+    public void IterateCells(IEnumerable<Vector2Int> indexes,
+        Action<CellBehaviour> onIterate)
     {
-        for (int x = 0; x < _cells.GetLength(0); x++)
-        for (int y = 0; y < _cells.GetLength(1); y++)
-        {
-            onIterate.Invoke(_cells[x, y]);
-        }
+        foreach (var index in indexes)
+            onIterate.Invoke(_cells[index.x, index.y]);
     }
     
     private CellBehaviour CreateCell(Vector2Int position, Vector2 size, Vector3 start)

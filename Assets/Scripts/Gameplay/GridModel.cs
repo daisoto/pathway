@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,8 +13,13 @@ public class GridModel
     private readonly DistantIndexProvider xDistantIndexProvider;
     private readonly DistantIndexProvider yDistantIndexProvider;
     
-    public IList<Cell> OccupiedCells => _occupiedCells;
-    private readonly List<Cell> _occupiedCells;
+    private readonly List<Cell> _finiteCells;
+    public IList<Vector2Int> FiniteCellsIndexes => 
+        _finiteCells.Select(c => c.Index).ToList();
+    
+    private readonly List<Cell> _setCells; 
+    public IList<Vector2Int> SetCellsIndexes => 
+        _setCells.Select(c => c.Index).ToList();
 
     public GridModel(Vector2Int size)
     {
@@ -33,7 +39,8 @@ public class GridModel
             { Direction.Right, new RightCellProvider(_cells) }, 
         };
         
-        _occupiedCells = new List<Cell>();
+        _finiteCells = new List<Cell>();
+        _setCells = new List<Cell>();
     }
     
     public void CreateGrid()
@@ -43,11 +50,31 @@ public class GridModel
             _cells[x, y] = new Cell(new Vector2Int(x, y));
     }
     
-    public Cell GetCell(Vector2Int index) => _cells[index.x, index.y];
+    public void SetCellDirection(Vector2Int index, Direction dir)
+    {
+        Debug.LogError(index);
+        var cell = _cells[index.x, index.y];
+        cell.Direction = dir;
+        _setCells.Add(cell);
+    }
+    
+    public void ClearSetCells()
+    {
+        foreach (var cell in _setCells)
+            cell.Direction = Direction.None;
+        _setCells.Clear();
+    }
+    
+    public void ClearFiniteCells()
+    {
+        foreach (var cell in _finiteCells)
+            cell.Direction = Direction.None;
+        _finiteCells.Clear();
+    }
 
     public Cell GetNextCell(Vector2Int index)
     {
-        var cell = GetCell(index);
+        var cell = _cells[index.x, index.y];
         var direction = cell.Direction;
         return direction == Direction.None ? cell :
             _nextCellProviders[direction].GetNextCell(index);
@@ -57,12 +84,12 @@ public class GridModel
     {
         var (initialCell, finalCell) = GetFiniteCellsInternal(distanceProvider);
             
-        while (_occupiedCells.Contains(initialCell) ||
-               _occupiedCells.Contains(finalCell))
+        while (_finiteCells.Contains(initialCell) ||
+               _finiteCells.Contains(finalCell))
             (initialCell, finalCell) = GetFiniteCellsInternal(distanceProvider);
             
-        _occupiedCells.Add(initialCell);
-        _occupiedCells.Add(finalCell);
+        _finiteCells.Add(initialCell);
+        _finiteCells.Add(finalCell);
         
         return (initialCell, finalCell);
     }
